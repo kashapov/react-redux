@@ -7,23 +7,33 @@
 //   document.getElementById('root')
 // );
 
-import { createStore } from 'redux';
+import { createStore } from "redux";
 
 function playlist(state = [], action) {
-  if (action.type === 'ADD_TRACK') {
-    return [
-      ...state,
-      action.payload
-    ];
+  if (action.type === "ADD_TRACK") {
+    return [...state, action.payload];
   }
   return state;
 }
 
 const store = createStore(playlist);
 
-store.subscribe(() => {
-  console.log('subscribe', store.getState());
-})
+const addTrackBtn = document.querySelector(".addTrack");
+const trackInput = document.querySelector(".trackInput");
+const list = document.querySelector(".list");
 
-store.dispatch({ type: 'ADD_TRACK', payload: 'Smells like spirit' });
-store.dispatch({ type: 'ADD_TRACK', payload: 'Enter Sandman' });
+store.subscribe(() => {
+  list.innerHTML = "";
+  trackInput.value = "";
+
+  store.getState().forEach(track => {
+    const li = document.createElement("li");
+    li.textContent = track;
+    list.appendChild(li);
+  });
+});
+
+addTrackBtn.addEventListener("click", () => {
+  const trackName = trackInput.value;
+  store.dispatch({ type: "ADD_TRACK", payload: trackName });
+});
